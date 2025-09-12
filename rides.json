@@ -1,0 +1,301 @@
+[ {
+  "id" : 1,
+  "passenger" : {
+    "id" : 1,
+    "firstName" : "John",
+    "lastName" : "Smith",
+    "birthDate" : "1985-04-11"
+  },
+  "driver" : {
+    "id" : 3,
+    "firstName" : "Michael",
+    "lastName" : "Williams",
+    "birthDate" : "1980-01-14"
+  },
+  "service" : {
+    "id" : 1,
+    "optionName" : "Standard Ride"
+  },
+  "startTime" : "2025-09-07T14:15:26",
+  "endTime" : "2025-09-07T14:45:26",
+  "status" : "COMPLETED",
+  "promo" : {
+    "id" : 1,
+    "code" : "WELCOME10",
+    "discountPercent" : 10.0,
+    "discountAmount" : null,
+    "voucher" : false,
+    "validUntil" : "2025-10-07T12:15:26",
+    "createdAt" : "2025-09-07T12:15:26"
+  }
+}, {
+  "id" : 2,
+  "passenger" : {
+    "id" : 2,
+    "firstName" : "Emily",
+    "lastName" : "Johnson",
+    "birthDate" : "1992-07-22"
+  },
+  "driver" : {
+    "id" : 5,
+    "firstName" : "David",
+    "lastName" : "Jones",
+    "birthDate" : "1988-03-17"
+  },
+  "service" : {
+    "id" : 2,
+    "optionName" : "Standard Ride"
+  },
+  "startTime" : "2025-09-07T13:15:26",
+  "endTime" : "2025-09-07T14:15:26",
+  "status" : "COMPLETED",
+  "promo" : {
+    "id" : 2,
+    "code" : "RIDE5",
+    "discountPercent" : 5.0,
+    "discountAmount" : null,
+    "voucher" : false,
+    "validUntil" : "2025-09-22T12:15:26",
+    "createdAt" : "2025-09-07T12:15:26"
+  }
+}, {
+  "id" : 3,
+  "passenger" : {
+    "id" : 4,
+    "firstName" : "Sarah",
+    "lastName" : "Brown",
+    "birthDate" : "1995-10-01"
+  },
+  "driver" : {
+    "id" : 9,
+    "firstName" : "Robert",
+    "lastName" : "Martinez",
+    "birthDate" : "1979-08-13"
+  },
+  "service" : {
+    "id" : 3,
+    "optionName" : "Standard Ride"
+  },
+  "startTime" : "2025-09-07T12:15:26",
+  "endTime" : "2025-09-07T13:15:26",
+  "status" : "COMPLETED",
+  "promo" : {
+    "id" : 3,
+    "code" : "FREECASH",
+    "discountPercent" : null,
+    "discountAmount" : 20.0,
+    "voucher" : true,
+    "validUntil" : "2025-09-17T12:15:26",
+    "createdAt" : "2025-09-07T12:15:26"
+  }
+}, {
+  "id" : 4,
+  "passenger" : {
+    "id" : 6,
+    "firstName" : "Olivia",
+    "lastName" : "Garcia",
+    "birthDate" : "1990-09-10"
+  },
+  "driver" : {
+    "id" : 3,
+    "firstName" : "Michael",
+    "lastName" : "Williams",
+    "birthDate" : "1980-01-14"
+  },
+  "service" : {
+    "id" : 4,
+    "optionName" : "SUV Ride"
+  },
+  "startTime" : "2025-09-06T15:15:26",
+  "endTime" : "2025-09-06T16:15:26",
+  "status" : "COMPLETED",
+  "promo" : {
+    "id" : 4,
+    "code" : "SUMMER15",
+    "discountPercent" : 15.0,
+    "discountAmount" : null,
+    "voucher" : false,
+    "validUntil" : "2025-11-06T13:15:26",
+    "createdAt" : "2025-09-07T12:15:26"
+  }
+}, {
+  "id" : 5,
+  "passenger" : {
+    "id" : 10,
+    "firstName" : "Emma",
+    "lastName" : "Wilson",
+    "birthDate" : "1993-02-26"
+  },
+  "driver" : {
+    "id" : 5,
+    "firstName" : "David",
+    "lastName" : "Jones",
+    "birthDate" : "1988-03-17"
+  },
+  "service" : {
+    "id" : 5,
+    "optionName" : "Luxury Ride"
+  },
+  "startTime" : "2025-09-05T15:15:26",
+  "endTime" : "2025-09-05T16:15:26",
+  "status" : "COMPLETED",
+  "promo" : {
+    "id" : 5,
+    "code" : "POOL50",
+    "discountPercent" : null,
+    "discountAmount" : 50.0,
+    "voucher" : true,
+    "validUntil" : "2025-09-12T12:15:26",
+    "createdAt" : "2025-09-07T12:15:26"
+  }
+}, {
+  "id" : 6,
+  "passenger" : {
+    "id" : 1,
+    "firstName" : "John",
+    "lastName" : "Smith",
+    "birthDate" : "1985-04-11"
+  },
+  "driver" : {
+    "id" : 9,
+    "firstName" : "Robert",
+    "lastName" : "Martinez",
+    "birthDate" : "1979-08-13"
+  },
+  "service" : {
+    "id" : 6,
+    "optionName" : "Standard Ride"
+  },
+  "startTime" : "2025-09-04T15:15:26",
+  "endTime" : "2025-09-04T16:15:26",
+  "status" : "COMPLETED",
+  "promo" : {
+    "id" : 6,
+    "code" : "FOOD20",
+    "discountPercent" : 20.0,
+    "discountAmount" : null,
+    "voucher" : false,
+    "validUntil" : "2025-10-02T12:15:26",
+    "createdAt" : "2025-09-07T12:15:26"
+  }
+}, {
+  "id" : 7,
+  "passenger" : {
+    "id" : 2,
+    "firstName" : "Emily",
+    "lastName" : "Johnson",
+    "birthDate" : "1992-07-22"
+  },
+  "driver" : {
+    "id" : 3,
+    "firstName" : "Michael",
+    "lastName" : "Williams",
+    "birthDate" : "1980-01-14"
+  },
+  "service" : {
+    "id" : 7,
+    "optionName" : "Shared Ride"
+  },
+  "startTime" : "2025-09-03T15:15:26",
+  "endTime" : "2025-09-03T16:15:26",
+  "status" : "CANCELED",
+  "promo" : {
+    "id" : 7,
+    "code" : "BUSINESS100",
+    "discountPercent" : null,
+    "discountAmount" : 100.0,
+    "voucher" : true,
+    "validUntil" : "2025-12-06T13:15:26",
+    "createdAt" : "2025-09-07T12:15:26"
+  }
+}, {
+  "id" : 8,
+  "passenger" : {
+    "id" : 4,
+    "firstName" : "Sarah",
+    "lastName" : "Brown",
+    "birthDate" : "1995-10-01"
+  },
+  "driver" : {
+    "id" : 5,
+    "firstName" : "David",
+    "lastName" : "Jones",
+    "birthDate" : "1988-03-17"
+  },
+  "service" : {
+    "id" : 8,
+    "optionName" : "Food Delivery"
+  },
+  "startTime" : "2025-09-02T15:15:26",
+  "endTime" : "2025-09-02T16:15:26",
+  "status" : "CANCELED",
+  "promo" : {
+    "id" : 8,
+    "code" : "NYCRIDE",
+    "discountPercent" : 12.0,
+    "discountAmount" : null,
+    "voucher" : false,
+    "validUntil" : "2025-09-27T12:15:26",
+    "createdAt" : "2025-09-07T12:15:26"
+  }
+}, {
+  "id" : 9,
+  "passenger" : {
+    "id" : 6,
+    "firstName" : "Olivia",
+    "lastName" : "Garcia",
+    "birthDate" : "1990-09-10"
+  },
+  "driver" : {
+    "id" : 9,
+    "firstName" : "Robert",
+    "lastName" : "Martinez",
+    "birthDate" : "1979-08-13"
+  },
+  "service" : {
+    "id" : 9,
+    "optionName" : "Standard Ride"
+  },
+  "startTime" : "2025-09-01T15:15:26",
+  "endTime" : "2025-09-01T16:15:26",
+  "status" : "IN_PROGRESS",
+  "promo" : {
+    "id" : 9,
+    "code" : "BLACK25",
+    "discountPercent" : 25.0,
+    "discountAmount" : null,
+    "voucher" : false,
+    "validUntil" : "2025-10-17T12:15:26",
+    "createdAt" : "2025-09-07T12:15:26"
+  }
+}, {
+  "id" : 10,
+  "passenger" : {
+    "id" : 10,
+    "firstName" : "Emma",
+    "lastName" : "Wilson",
+    "birthDate" : "1993-02-26"
+  },
+  "driver" : {
+    "id" : 3,
+    "firstName" : "Michael",
+    "lastName" : "Williams",
+    "birthDate" : "1980-01-14"
+  },
+  "service" : {
+    "id" : 10,
+    "optionName" : "Standard Ride"
+  },
+  "startTime" : "2025-08-31T15:15:26",
+  "endTime" : "2025-08-31T16:15:26",
+  "status" : "REQUESTED",
+  "promo" : {
+    "id" : 10,
+    "code" : "WELCOME5",
+    "discountPercent" : 5.0,
+    "discountAmount" : null,
+    "voucher" : false,
+    "validUntil" : "2025-09-14T12:15:26",
+    "createdAt" : "2025-09-07T12:15:26"
+  }
+} ]

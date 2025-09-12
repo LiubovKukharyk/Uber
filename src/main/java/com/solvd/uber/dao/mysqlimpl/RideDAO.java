@@ -10,194 +10,124 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
 
 public class RideDAO extends MySQL implements IRideDAO<Ride> {
     private static final Logger LOGGER = LogManager.getLogger(RideDAO.class);
 
-    private static final String INSERT_SQL =
-            "INSERT INTO Ride (PassengerId, DriverId, ServiceId, start_time, end_time, status) VALUES (?, ?, ?, ?, ?, ?)";
-    private static final String SELECT_BY_ID = "SELECT * FROM Ride WHERE Id = ?";
-    private static final String SELECT_ALL = "SELECT * FROM Ride";
-    private static final String UPDATE_SQL =
-            "UPDATE Ride SET PassengerId=?, DriverId=?, ServiceId=?, start_time=?, end_time=?, status=? WHERE Id=?";
-    private static final String DELETE_SQL = "DELETE FROM Ride WHERE Id=?";
-    private static final String SELECT_BY_PASSENGER = "SELECT * FROM Ride WHERE PassengerId = ?";
-    private static final String SELECT_BY_DRIVER = "SELECT * FROM Ride WHERE DriverId = ?";
-    private static final String ACCEPT_RIDE_SQL = "UPDATE Ride SET DriverId=?, status=? WHERE Id=?";
-    private static final String COMPLETE_RIDE_SQL = "UPDATE Ride SET status=?, end_time=? WHERE Id=?";
-
-    @Override
-    public Ride getById(long id) {
-        try (Connection c = getConnection();
-             PreparedStatement stmt = c.prepareStatement(SELECT_BY_ID)) {
-            stmt.setLong(1, id);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) return mapRow(rs);
-            }
-        } catch (SQLException e) {
-            LOGGER.error("getById Ride", e);
-        }
-        return null;
-    }
+    private static final String SELECT_ALL = """
+            SELECT r.Id AS ride_id, r.start_time, r.end_time, r.status,
+                   p.Id AS passenger_id, p.first_name AS passenger_first_name, p.last_name AS passenger_last_name, p.birth_date AS passenger_birth_date,
+                   d.Id AS driver_id, d.first_name AS driver_first_name, d.last_name AS driver_last_name, d.birth_date AS driver_birth_date,
+                   s.Id AS service_id, s.option_name AS service_option,
+                   pr.Id AS promo_id, pr.code AS promo_code, pr.isVoucher AS promo_isVoucher,
+                   pr.discount_percent AS promo_discount_percent, pr.discount_amount AS promo_discount_amount,
+                   pr.valid_until AS promo_valid_until, pr.created_at AS promo_created_at
+            FROM Ride r
+            JOIN Person p ON r.PassengerId = p.Id
+            JOIN Person d ON r.DriverId = d.Id
+            JOIN Service s ON r.ServiceId = s.Id
+            LEFT JOIN Promo pr ON r.promo_id = pr.Id
+            """;
 
     @Override
     public List<Ride> getAll() {
-        List<Ride> list = new ArrayList<>();
+        List<Ride> rides = new ArrayList<>();
         try (Connection c = getConnection();
              PreparedStatement stmt = c.prepareStatement(SELECT_ALL);
              ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) list.add(mapRow(rs));
+
+            while (rs.next()) {
+                rides.add(mapRow(rs));
+            }
+
         } catch (SQLException e) {
             LOGGER.error("getAll Ride", e);
         }
-        return list;
-    }
-
-    @Override
-    public void insert(Ride entity) {
-        try (Connection c = getConnection();
-             PreparedStatement stmt = c.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setLong(1, entity.getPassenger() != null ? entity.getPassenger().getId() : 0);
-            stmt.setLong(2, entity.getDriver() != null ? entity.getDriver().getId() : 0);
-            stmt.setLong(3, entity.getService() != null ? entity.getService().getId() : 0);
-            stmt.setTimestamp(4, entity.getStartTime() != null ? Timestamp.valueOf(entity.getStartTime()) : null);
-            stmt.setTimestamp(5, entity.getEndTime() != null ? Timestamp.valueOf(entity.getEndTime()) : null);
-            stmt.setString(6, entity.getStatus() != null ? entity.getStatus().name() : null);
-            stmt.executeUpdate();
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) entity.setId(rs.getLong(1));
-            }
-        } catch (SQLException e) {
-            LOGGER.error("insert Ride", e);
-        }
-    }
-
-    @Override
-    public void update(Ride entity) {
-        try (Connection c = getConnection();
-             PreparedStatement stmt = c.prepareStatement(UPDATE_SQL)) {
-            stmt.setLong(1, entity.getPassenger() != null ? entity.getPassenger().getId() : 0);
-            stmt.setLong(2, entity.getDriver() != null ? entity.getDriver().getId() : 0);
-            stmt.setLong(3, entity.getService() != null ? entity.getService().getId() : 0);
-            stmt.setTimestamp(4, entity.getStartTime() != null ? Timestamp.valueOf(entity.getStartTime()) : null);
-            stmt.setTimestamp(5, entity.getEndTime() != null ? Timestamp.valueOf(entity.getEndTime()) : null);
-            stmt.setString(6, entity.getStatus() != null ? entity.getStatus().name() : null);
-            stmt.setLong(7, entity.getId());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            LOGGER.error("update Ride id=" + entity.getId(), e);
-        }
-    }
-
-    @Override
-    public void delete(long id) {
-        try (Connection c = getConnection();
-             PreparedStatement stmt = c.prepareStatement(DELETE_SQL)) {
-            stmt.setLong(1, id);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            LOGGER.error("delete Ride id=" + id, e);
-        }
-    }
-
-    @Override
-    public List<Ride> getByPassengerId(long passengerId) {
-        List<Ride> res = new ArrayList<>();
-        try (Connection c = getConnection();
-             PreparedStatement stmt = c.prepareStatement(SELECT_BY_PASSENGER)) {
-            stmt.setLong(1, passengerId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) res.add(mapRow(rs));
-            }
-        } catch (SQLException e) {
-            LOGGER.error("getByPassengerId", e);
-        }
-        return res;
-    }
-
-    @Override
-    public List<Ride> getByDriverId(long driverPersonId) {
-        List<Ride> res = new ArrayList<>();
-        try (Connection c = getConnection();
-             PreparedStatement stmt = c.prepareStatement(SELECT_BY_DRIVER)) {
-            stmt.setLong(1, driverPersonId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) res.add(mapRow(rs));
-            }
-        } catch (SQLException e) {
-            LOGGER.error("getByDriverId", e);
-        }
-        return res;
-    }
-
-    @Override
-    public void acceptRide(long rideId, long driverPersonId) {
-        try (Connection c = getConnection();
-             PreparedStatement stmt = c.prepareStatement(ACCEPT_RIDE_SQL)) {
-            stmt.setLong(1, driverPersonId);
-            stmt.setString(2, RideStatus.ACCEPTED.name());
-            stmt.setLong(3, rideId);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            LOGGER.error("acceptRide id=" + rideId, e);
-        }
-    }
-
-    @Override
-    public void completeRide(long rideId) {
-        try (Connection c = getConnection();
-             PreparedStatement stmt = c.prepareStatement(COMPLETE_RIDE_SQL)) {
-            stmt.setString(1, RideStatus.COMPLETED.name());
-            stmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
-            stmt.setLong(3, rideId);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            LOGGER.error("completeRide id=" + rideId, e);
-        }
+        return rides;
     }
 
     private Ride mapRow(ResultSet rs) throws SQLException {
-        Ride r = new Ride();
-        r.setId(rs.getLong("Id"));
+        Ride ride = new Ride();
+        ride.setId(rs.getLong("ride_id"));
 
         Person passenger = new Person();
-        passenger.setId(rs.getLong("PassengerId"));
-        r.setPassenger(passenger);
+        passenger.setId(rs.getLong("passenger_id"));
+        passenger.setFirstName(rs.getString("passenger_first_name"));
+        passenger.setLastName(rs.getString("passenger_last_name"));
+        passenger.setBirthDate(rs.getDate("passenger_birth_date"));
+        ride.setPassenger(passenger);
 
-        long driverId = rs.getLong("DriverId");
-        if (driverId > 0) {
-            Person driver = new Person();
-            driver.setId(driverId);
-            r.setDriver(driver);
-        }
+        Person driver = new Person();
+        driver.setId(rs.getLong("driver_id"));
+        driver.setFirstName(rs.getString("driver_first_name"));
+        driver.setLastName(rs.getString("driver_last_name"));
+        driver.setBirthDate(rs.getDate("driver_birth_date"));
+        ride.setDriver(driver);
 
-        Service s = new Service();
-        s.setId(rs.getLong("ServiceId"));
-        r.setService(s);
+        Service service = new Service();
+        service.setId(rs.getLong("service_id"));
+        service.setOptionName(rs.getString("service_option"));
+        ride.setService(service);
 
-        Timestamp st = rs.getTimestamp("start_time");
-        if (st != null) r.setStartTime(st.toLocalDateTime());
-
-        Timestamp et = rs.getTimestamp("end_time");
-        if (et != null) r.setEndTime(et.toLocalDateTime());
+        Timestamp stTs = rs.getTimestamp("start_time");
+        if (stTs != null) ride.setStartTime(stTs.toLocalDateTime());
+        Timestamp etTs = rs.getTimestamp("end_time");
+        if (etTs != null) ride.setEndTime(etTs.toLocalDateTime());
 
         String statusStr = rs.getString("status");
         if (statusStr != null) {
-            r.setStatus(RideStatus.valueOf(statusStr));
+            try {
+                ride.setStatus(RideStatus.valueOf(statusStr.trim().replace(' ', '_').toUpperCase()));
+            } catch (IllegalArgumentException ignored) {
+                ride.setStatus(null);
+            }
         }
 
-        try {
-            long promoId = rs.getLong("promo_id");
-            if (!rs.wasNull() && promoId > 0) {
-                Promo p = new Promo();
-                p.setId(promoId);
-                r.setPromo(p);
-            }
-        } catch (SQLException ignored) {}
+        long promoId = rs.getLong("promo_id");
+        if (!rs.wasNull()) {
+            Promo promo = new Promo();
+            promo.setId(promoId);
+            promo.setCode(rs.getString("promo_code"));
+            promo.setVoucher(rs.getBoolean("promo_isVoucher"));
+            promo.setDiscountPercent(rs.getObject("promo_discount_percent", Double.class));
+            promo.setDiscountAmount(rs.getObject("promo_discount_amount", Double.class));
 
-        return r;
+            Timestamp validUntilTs = rs.getTimestamp("promo_valid_until");
+            promo.setValidUntil(validUntilTs != null ? new Date(validUntilTs.getTime()) : null);
+
+            Timestamp createdAtTs = rs.getTimestamp("promo_created_at");
+            promo.setCreatedAt(createdAtTs != null ? new Date(createdAtTs.getTime()) : null);
+
+            ride.setPromo(promo);
+        }
+
+        return ride;
     }
+
+    @Override
+    public Ride getById(long id) { return null; }
+
+    @Override
+    public void insert(Ride entity) {}
+
+    @Override
+    public void update(Ride entity) {}
+
+    @Override
+    public void delete(long id) {}
+
+    @Override
+    public List<Ride> getByPassengerId(long passengerId) { return null; }
+
+    @Override
+    public List<Ride> getByDriverId(long driverPersonId) { return null; }
+
+    @Override
+    public void acceptRide(long rideId, long driverPersonId) {}
+
+    @Override
+    public void completeRide(long rideId) {}
 }

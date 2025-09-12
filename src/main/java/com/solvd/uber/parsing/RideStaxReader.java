@@ -14,11 +14,14 @@ import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.XMLEvent;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class RideStaxReader {
+
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public static List<Ride> readRides(String fileName) throws FileNotFoundException, XMLStreamException {
         List<Ride> rides = new ArrayList<>();
@@ -57,82 +60,77 @@ public class RideStaxReader {
                     String endElementName = event.asEndElement().getName().getLocalPart();
 
                     if (elementContent != null) {
-                        switch (endElementName) {
-                            case "id":
-                                if (currentRide != null) currentRide.setId(Long.parseLong(elementContent));
-                                break;
-                            case "status":
-                                if (currentRide != null) {
-                                    String norm = elementContent.trim().replace(' ', '_').toUpperCase();
-                                    try {
-                                        currentRide.setStatus(RideStatus.valueOf(norm));
-                                    } catch (IllegalArgumentException ex) {
-                                        // неизвестный статус — игнорируем (можно логировать)
+                        try {
+                            switch (endElementName) {
+                                case "id":
+                                    if (currentRide != null) currentRide.setId(Long.parseLong(elementContent));
+                                    break;
+                                case "status":
+                                    if (currentRide != null) {
+                                        String norm = elementContent.trim().replace(' ', '_').toUpperCase();
+                                        try {
+                                            currentRide.setStatus(RideStatus.valueOf(norm));
+                                        } catch (IllegalArgumentException ignored) {}
                                     }
-                                }
-                                break;
-                            case "startTime":
-                                if (currentRide != null) currentRide.setStartTime(LocalDateTime.parse(elementContent));
-                                break;
-                            case "endTime":
-                                if (currentRide != null) currentRide.setEndTime(LocalDateTime.parse(elementContent));
-                                break;
-                            case "requestTime":
-                                // если используется — добавьте соответствующие поля в Ride
-                                break;
-                            case "acceptTime":
-                                break;
-                            case "completeTime":
-                                break;
+                                    break;
+                                case "startTime":
+                                    if (currentRide != null) currentRide.setStartTime(DATE_FORMAT.parse(elementContent).toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime());
+                                    break;
+                                case "endTime":
+                                    if (currentRide != null) currentRide.setEndTime(DATE_FORMAT.parse(elementContent).toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime());
+                                    break;
 
-                            case "passengerId":
-                                if (currentPassenger != null) currentPassenger.setId(Long.parseLong(elementContent));
-                                break;
-                            case "passengerFirstName":
-                                if (currentPassenger != null) currentPassenger.setFirstName(elementContent);
-                                break;
-                            case "passengerLastName":
-                                if (currentPassenger != null) currentPassenger.setLastName(elementContent);
-                                break;
+                                case "passengerId":
+                                    if (currentPassenger != null) currentPassenger.setId(Long.parseLong(elementContent));
+                                    break;
+                                case "passengerFirstName":
+                                    if (currentPassenger != null) currentPassenger.setFirstName(elementContent);
+                                    break;
+                                case "passengerLastName":
+                                    if (currentPassenger != null) currentPassenger.setLastName(elementContent);
+                                    break;
 
-                            case "driverId":
-                                if (currentDriver != null) currentDriver.setId(Long.parseLong(elementContent));
-                                break;
-                            case "driverFirstName":
-                                if (currentDriver != null) currentDriver.setFirstName(elementContent);
-                                break;
-                            case "driverLastName":
-                                if (currentDriver != null) currentDriver.setLastName(elementContent);
-                                break;
+                                case "driverId":
+                                    if (currentDriver != null) currentDriver.setId(Long.parseLong(elementContent));
+                                    break;
+                                case "driverFirstName":
+                                    if (currentDriver != null) currentDriver.setFirstName(elementContent);
+                                    break;
+                                case "driverLastName":
+                                    if (currentDriver != null) currentDriver.setLastName(elementContent);
+                                    break;
 
-                            case "serviceId":
-                                if (currentService != null) currentService.setId(Long.parseLong(elementContent));
-                                break;
-                            case "serviceName":
-                                if (currentService != null) currentService.setOptionName(elementContent);
-                                break;
+                                case "serviceId":
+                                    if (currentService != null) currentService.setId(Long.parseLong(elementContent));
+                                    break;
+                                case "serviceName":
+                                    if (currentService != null) currentService.setOptionName(elementContent);
+                                    break;
 
-                            case "promoId":
-                                if (currentPromo != null) currentPromo.setId(Long.parseLong(elementContent));
-                                break;
-                            case "promoCode":
-                                if (currentPromo != null) currentPromo.setCode(elementContent);
-                                break;
-                            case "isVoucher":
-                                if (currentPromo != null) currentPromo.setVoucher(Boolean.parseBoolean(elementContent));
-                                break;
-                            case "discountPercent":
-                                if (currentPromo != null) currentPromo.setDiscountPercent(Double.parseDouble(elementContent));
-                                break;
-                            case "discountAmount":
-                                if (currentPromo != null) currentPromo.setDiscountAmount(Double.parseDouble(elementContent));
-                                break;
-                            case "validUntil":
-                                if (currentPromo != null) currentPromo.setValidUntil(LocalDateTime.parse(elementContent));
-                                break;
-                            case "createdAt":
-                                if (currentPromo != null) currentPromo.setCreatedAt(LocalDateTime.parse(elementContent));
-                                break;
+                                case "promoId":
+                                    if (currentPromo != null) currentPromo.setId(Long.parseLong(elementContent));
+                                    break;
+                                case "promoCode":
+                                    if (currentPromo != null) currentPromo.setCode(elementContent);
+                                    break;
+                                case "isVoucher":
+                                    if (currentPromo != null) currentPromo.setVoucher(Boolean.parseBoolean(elementContent));
+                                    break;
+                                case "discountPercent":
+                                    if (currentPromo != null) currentPromo.setDiscountPercent(Double.parseDouble(elementContent));
+                                    break;
+                                case "discountAmount":
+                                    if (currentPromo != null) currentPromo.setDiscountAmount(Double.parseDouble(elementContent));
+                                    break;
+                                case "validUntil":
+                                    if (currentPromo != null) currentPromo.setValidUntil(DATE_FORMAT.parse(elementContent));
+                                    break;
+                                case "createdAt":
+                                    if (currentPromo != null) currentPromo.setCreatedAt(DATE_FORMAT.parse(elementContent));
+                                    break;
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Error parsing element " + endElementName + ": " + e.getMessage());
                         }
                     }
 
