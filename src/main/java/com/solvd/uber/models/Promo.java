@@ -1,51 +1,56 @@
 package com.solvd.uber.models;
 
-import java.time.LocalDateTime;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Date;
+
+@XmlRootElement(name = "promo")
 public class Promo {
     private long id;
-    private Person person = new Person();
     private String code;
-    private boolean isVoucher;
     private Double discountPercent;
     private Double discountAmount;
-    private LocalDateTime validUntil;
-    private LocalDateTime createdAt;
+    private boolean voucher;
+
+    @JsonProperty("validUntil")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private Date validUntil;
+
+    @JsonProperty("createdAt")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private Date createdAt;
 
     public Promo() {}
 
-    public Promo(long id, Person person, String code, boolean isVoucher, Double discountPercent, Double discountAmount, LocalDateTime validUntil, LocalDateTime createdAt) {
-        this.id = id;
-        this.person = person;
-        this.code = code;
-        this.isVoucher = isVoucher;
-        this.discountPercent = discountPercent;
-        this.discountAmount = discountAmount;
-        this.validUntil = validUntil;
-        this.createdAt = createdAt;
-    }
-
+    @XmlElement
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
 
-    public Person getPerson() { return person; }
-    public void setPerson(Person person) { this.person = person; }
-
+    @XmlElement
     public String getCode() { return code; }
     public void setCode(String code) { this.code = code; }
 
-    public boolean isVoucher() { return isVoucher; }
-    public void setVoucher(boolean voucher) { isVoucher = voucher; }
-
+    @XmlElement
     public Double getDiscountPercent() { return discountPercent; }
     public void setDiscountPercent(Double discountPercent) { this.discountPercent = discountPercent; }
 
+    @XmlElement
     public Double getDiscountAmount() { return discountAmount; }
     public void setDiscountAmount(Double discountAmount) { this.discountAmount = discountAmount; }
 
-    public LocalDateTime getValidUntil() { return validUntil; }
-    public void setValidUntil(LocalDateTime validUntil) { this.validUntil = validUntil; }
+    @XmlElement
+    public boolean isVoucher() { return voucher; }
+    public void setVoucher(boolean voucher) { this.voucher = voucher; }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    @XmlElement
+    public Date getValidUntil() { return validUntil; }
+    public void setValidUntil(Date validUntil) { this.validUntil = validUntil; }
+
+    @XmlElement
+    public Date getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
 }

@@ -1,55 +1,34 @@
 package com.solvd.uber.models;
 
-import com.solvd.uber.models.Ride;
-import com.solvd.uber.models.RideListWrapper;
-import com.solvd.uber.models.Person;
-import com.solvd.uber.enums.RideStatus;
-
-import javax.xml.bind.*;
-import java.io.File;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import com.solvd.uber.dao.mysqlimpl.RideDAO;
+import com.solvd.uber.parsing.RideExporter;
+import com.solvd.uber.parsing.RideJsonExporter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import jakarta.xml.bind.JAXBException;
 import java.util.List;
 
 public class Main {
-    private static final String FILE_NAME = "rides_jaxb.xml";
+    private static final Logger LOGGER = LogManager.getLogger("RidesLogger");
 
-    public static void main(String[] args) throws Exception {
-        List<Ride> rides = new ArrayList<>();
+    public static void main(String[] args) throws JAXBException {
+        RideDAO rideDAO = new RideDAO();
+        List<Ride> rides = rideDAO.getAll();
 
-        Ride ride1 = new Ride();
-        ride1.setId(1);
-        ride1.setStatus(RideStatus.REQUESTED);
-        ride1.setStartTime(LocalDateTime.now());
-        Person passenger = new Person();
-        passenger.setId(101);
-        passenger.setFirstName("John");
-        passenger.setLastName("Smith");
-        ride1.setPassenger(passenger);
+        LOGGER.info("Rides count: {}", rides.size());
+        rides.forEach(r -> {
+            LOGGER.info("Ride id: {}, Passenger: {} {}, Driver: {} {}, Service: {}, Promo code: {}, Discount %: {}, Discount amount: {}",
+                    r.getId(),
+                    r.getPassenger().getFirstName(), r.getPassenger().getLastName(),
+                    r.getDriver().getFirstName(), r.getDriver().getLastName(),
+                    r.getService().getOptionName(),
+                    r.getPromo() != null ? r.getPromo().getCode() : "NULL",
+                    r.getPromo() != null && r.getPromo().getDiscountPercent() != null ? r.getPromo().getDiscountPercent() : "NULL",
+                    r.getPromo() != null && r.getPromo().getDiscountAmount() != null ? r.getPromo().getDiscountAmount() : "NULL"
+            );
+        });
 
-        rides.add(ride1);
-
-        RideListWrapper wrapper = new RideListWrapper();
-        wrapper.setRides(rides);
-
-        marshal(wrapper);
-        RideListWrapper unmarshalled = unmarshal();
-
-        for (Ride r : unmarshalled.getRides()) {
-            System.out.println("Ride id=" + r.getId() + ", status=" + r.getStatus());
-        }
-    }
-
-    private static void marshal(RideListWrapper wrapper) throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(RideListWrapper.class, Ride.class);
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(wrapper, new File(FILE_NAME));
-    }
-
-    private static RideListWrapper unmarshal() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(RideListWrapper.class, Ride.class);
-        Unmarshaller unmarshaller = context.createUnmarshaller();
-        return (RideListWrapper) unmarshaller.unmarshal(new File(FILE_NAME));
+        RideExporter.exportRides(rides);
+        RideJsonExporter.toJson(rides, "rides.json");
     }
 }
